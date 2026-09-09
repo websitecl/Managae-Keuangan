@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#2563eb">
+<title>UangKu Pro</title>
+<style>
+:root{--bg:#f4f7fb;--card:#fff;--text:#17202a;--muted:#64748b;--line:#e2e8f0;--primary:#2563eb;--danger:#dc2626;--good:#16a34a;--warn:#d97706}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--text)}
+button,input,select,textarea{font:inherit}button{border:0;border-radius:11px;padding:11px 14px;cursor:pointer}.primary{background:var(--primary);color:#fff}.danger{background:var(--danger);color:#fff}.ghost{background:#eef2f7;color:var(--text)}.good{background:#dcfce7;color:#166534}
+.hidden{display:none!important}.container{max-width:1100px;margin:auto;padding:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:0 5px 20px #00000008;margin-bottom:16px}
+.auth{max-width:440px;margin:55px auto}.brand{text-align:center;margin-bottom:22px}.brand h1{font-size:32px;margin:0 0 5px}
+h1,h2,h3{margin:0 0 12px}.muted{color:var(--muted);font-size:14px}.error{color:#b91c1c;background:#fee2e2;padding:10px;border-radius:10px;margin:10px 0}.success{color:#166534;background:#dcfce7;padding:10px;border-radius:10px;margin:10px 0}
+form{display:grid;gap:11px}label{font-size:13px;font-weight:650}input,select,textarea{width:100%;padding:12px;border:1px solid var(--line);border-radius:11px;background:#fff;outline:none}input:focus,select:focus,textarea:focus{border-color:var(--primary)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:11px}.top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:16px}.top .actions{display:flex;gap:8px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.stat{padding:17px;border-radius:15px;background:#f8fafc;border:1px solid var(--line)}.stat span{display:block;color:var(--muted);font-size:13px}.stat b{display:block;font-size:21px;margin-top:6px}
+.tabs{display:flex;gap:8px;overflow:auto;margin-bottom:16px}.tabs button{white-space:nowrap;background:#e8eef7}.tabs button.active{background:var(--primary);color:white}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.toolbar input,.toolbar select{max-width:230px}
+table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:11px 8px;border-bottom:1px solid var(--line);vertical-align:top}.in{color:var(--good)}.out{color:var(--danger)}
+.progress{height:11px;background:#e5e7eb;border-radius:20px;overflow:hidden}.progress>div{height:100%;background:var(--primary);width:0}
+.calc{max-width:450px}.display{background:#111827;color:#fff;padding:16px;border-radius:12px;text-align:right;font-size:27px;min-height:61px;overflow:auto;margin-bottom:9px}.keys{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}.keys button{background:#eef2f7;font-size:18px}.keys .eq{background:var(--primary);color:white}
+.chart{height:220px;display:flex;align-items:end;gap:10px;padding:15px;border:1px solid var(--line);border-radius:12px;background:#fafcff}.barwrap{flex:1;height:100%;display:flex;flex-direction:column;justify-content:end;align-items:center;gap:5px}.bar{width:70%;min-height:2px;background:var(--primary);border-radius:7px 7px 2px 2px}.bar.exp{background:#ef4444}.barwrap small{font-size:10px;color:var(--muted)}
+.modal{position:fixed;inset:0;background:#0008;display:flex;align-items:center;justify-content:center;padding:15px;z-index:10}.modal .card{width:min(500px,100%);margin:0}
+footer{text-align:center;color:var(--muted);padding:15px;font-size:12px}
+@media(max-width:760px){.stats{grid-template-columns:1fr 1fr}.row{grid-template-columns:1fr}th:nth-child(3),td:nth-child(3){display:none}.top{align-items:flex-start}.top .actions{flex-wrap:wrap}.container{padding:11px}}
+</style>
+</head>
+<body>
+
+<div id="auth" class="container">
+ <div class="card auth">
+  <div class="brand"><h1>💰 UangKu Pro</h1><div class="muted">Pengelola keuangan pribadi</div></div>
+  <div id="authMsg"></div>
+  <div id="loginPanel">
+   <h2>Login</h2>
+   <form id="loginForm">
+    <input id="loginUser" placeholder="Username" autocomplete="username" required>
+    <input id="loginPass" type="password" placeholder="Password" autocomplete="current-password" required>
+    <button class="primary">Masuk</button>
+   </form>
+   <p class="muted">Belum punya akun? <button id="goRegister" class="ghost" type="button">Registrasi</button></p>
+   <p class="muted">Admin bawaan: <b>Ditzzy</b></p>
+  </div>
+  <div id="registerPanel" class="hidden">
+   <h2>Registrasi</h2>
+   <form id="registerForm">
+    <input id="regUser" placeholder="Username (3-30 karakter)" minlength="3" maxlength="30" required>
+    <input id="regPass" type="password" placeholder="Password (minimal 6 karakter)" minlength="6" required>
+    <input id="regPass2" type="password" placeholder="Ulangi password" minlength="6" required>
+    <button class="primary">Buat Akun</button>
+   </form>
+   <p class="muted">Sudah punya akun? <button id="goLogin" class="ghost" type="button">Kembali Login</button></p>
+  </div>
+ </div>
+</div>
+
+<div id="app" class="hidden">
+ <main class="container">
+  <div class="top">
+   <div><h1>💰 UangKu Pro</h1><div class="muted">Halo, <b id="username"></b></div></div>
+   <div class="actions"><button id="themeBtn" class="ghost">🌙</button><button id="logout" class="danger">Keluar</button></div>
+  </div>
+
+  <nav class="tabs">
+   <button class="active" data-tab="home">Dashboard</button>
+   <button data-tab="transactions">Transaksi</button>
+   <button data-tab="budget">Budget & Tabungan</button>
+   <button data-tab="calculator">Kalkulator</button>
+   <button data-tab="settings">Data & Akun</button>
+  </nav>
+
+  <section id="homeTab">
+   <div class="stats">
+    <div class="stat"><span>Saldo</span><b id="saldo">Rp0</b></div>
+    <div class="stat"><span>Pemasukan</span><b id="income" class="in">Rp0</b></div>
+    <div class="stat"><span>Pengeluaran</span><b id="expense" class="out">Rp0</b></div>
+    <div class="stat"><span>Transaksi</span><b id="count">0</b></div>
+   </div>
+   <div class="card" style="margin-top:16px"><h2>Ringkasan Bulan Ini</h2><div id="monthSummary" class="muted"></div></div>
+   <div class="card"><h2>Pengeluaran per Kategori</h2><div id="categorySummary" class="muted"></div></div>
+  </section>
+
+  <section id="transactionsTab" class="hidden">
+   <div class="card">
+    <h2 id="formTitle">Tambah Transaksi</h2>
+    <form id="txForm">
+     <div class="row"><div><label>Deskripsi</label><input id="desc" placeholder="Contoh: Gaji / Makan" required></div><div><label>Nominal</label><input id="amount" type="number" min="1" step="1" placeholder="50000" required></div></div>
+     <div class="row"><div><label>Jenis</label><select id="type"><option value="in">Pemasukan</option><option value="out">Pengeluaran</option></select></div><div><label>Kategori</label><select id="category"><option>Gaji</option><option>Makanan</option><option>Transportasi</option><option>Belanja</option><option>Tagihan</option><option>Tabungan</option><option>Hiburan</option><option>Lainnya</option></select></div></div>
+     <div><label>Tanggal</label><input id="date" type="date" required></div>
+     <div class="toolbar"><button class="primary" id="saveTx">Simpan</button><button class="ghost hidden" type="button" id="cancelEdit">Batal Edit</button></div>
+    </form>
+   </div>
+   <div class="card">
+    <h2>Riwayat Transaksi</h2>
+    <div class="toolbar"><input id="search" placeholder="Cari transaksi..."><select id="filterType"><option value="all">Semua</option><option value="in">Pemasukan</option><option value="out">Pengeluaran</option></select><input id="filterMonth" type="month"></div>
+    <div style="overflow:auto"><table><thead><tr><th>Tanggal</th><th>Deskripsi</th><th>Kategori</th><th>Nominal</th><th>Aksi</th></tr></thead><tbody id="txList"></tbody></table></div>
+   </div>
+  </section>
+
+  <section id="budgetTab" class="hidden">
+   <div class="card"><h2>Budget Bulanan</h2><form id="budgetForm"><div class="row"><input id="budgetAmount" type="number" min="0" placeholder="Contoh 2000000" required><input id="budgetMonth" type="month" required></div><button class="primary">Simpan Budget</button></form></div>
+   <div class="card"><h2>Progress Budget</h2><div id="budgetInfo" class="muted">Belum ada budget.</div></div>
+   <div class="card"><h2>Target Tabungan</h2><form id="goalForm"><div class="row"><input id="goalName" placeholder="Contoh: Beli HP" required><input id="goalAmount" type="number" min="1" placeholder="Target nominal" required></div><button class="primary">Simpan Target</button></form><div id="goals" style="margin-top:15px"></div></div>
+  </section>
+
+  <section id="calculatorTab" class="hidden">
+   <div class="card calc"><h2>Kalkulator</h2><div id="display" class="display">0</div><div class="keys">
+    <button data-k="C">C</button><button data-k="⌫">⌫</button><button data-k="(">(</button><button data-k=")">)</button>
+    <button data-k="7">7</button><button data-k="8">8</button><button data-k="9">9</button><button data-k="/">÷</button>
+    <button data-k="4">4</button><button data-k="5">5</button><button data-k="6">6</button><button data-k="*">×</button>
+    <button data-k="1">1</button><button data-k="2">2</button><button data-k="3">3</button><button data-k="-">−</button>
+    <button data-k="0">0</button><button data-k=".">.</button><button data-k="+">+</button><button data-k="=" class="eq">=</button>
+   </div></div>
+  </section>
+
+  <section id="settingsTab" class="hidden">
+   <div class="card"><h2>Backup & Restore</h2><p class="muted">Backup menyimpan transaksi, budget, dan target tabungan akun ini.</p><div class="toolbar"><button id="backup" class="primary">⬇️ Download Backup</button><label class="ghost" style="padding:11px 14px;border-radius:11px;cursor:pointer">⬆️ Restore <input id="restore" type="file" accept=".json" hidden></label><button id="clearData" class="danger">Hapus Semua Data</button></div></div>
+   <div class="card"><h2>Akun</h2><p>Username: <b id="accountName"></b></p><button id="deleteAccount" class="danger">Hapus Akun</button></div>
+   <div class="card" id="adminCard"><h2>Admin</h2><p class="muted">Akun admin bawaan: <b>Ditzzy</b>. Data pengguna lain tetap terpisah di browser ini.</p></div>
+  </section>
+ </main>
+ <footer>UangKu Pro • Data tersimpan di perangkat/browser kamu</footer>
+</div>
+
+<div id="editModal" class="modal hidden"><div class="card"><h2>Edit Transaksi</h2><p class="muted">Form edit menggunakan form transaksi di tab Transaksi.</p><button class="primary" onclick="closeModal()">Tutup</button></div></div>
+
+<script>
+"use strict";
+const ADMIN={u:"Ditzzy",p:"Ditzzy123"}, K={users:"uk_users_v4",data:"uk_data_v4",session:"uk_session_v4",theme:"uk_theme_v4"};
+const $=id=>document.getElementById(id), today=()=>new Date().toISOString().slice(0,10);
+const money=n=>new Intl.NumberFormat("id-ID",{style:"currency",currency:"IDR",maximumFractionDigits:0}).format(Number(n)||0);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
+const getUsers=()=>JSON.parse(localStorage.getItem(K.users)||"[]");
+const setUsers=x=>localStorage.setItem(K.users,JSON.stringify(x));
+const getDB=()=>JSON.parse(localStorage.getItem(K.data)||"{}");
+const setDB=x=>localStorage.setItem(K.data,JSON.stringify(x));
+const me=()=>localStorage.getItem(K.session);
+function records(){let d=getDB();return Array.isArray(d[me()])?d[me()]:[]}
+function setRecords(a){let d=getDB();d[me()]=a;setDB(d)}
+function profile(){let d=getDB();return d["_profile_"+me()]||{budget:{},goals:[]}}
+function setProfile(p){let d=getDB();d["_profile_"+me()]=p;setDB(d)}
+function message(t,ok=false){$("authMsg").innerHTML=`<div class="${ok?"success":"error"}">${esc(t)}</div>`}
+function openAuth(reg=false){$("auth").classList.remove("hidden");$("app").classList.add("hidden");$("loginPanel").classList.toggle("hidden",reg);$("registerPanel").classList.toggle("hidden",!reg);$("authMsg").innerHTML=""}
+function login(u){localStorage.setItem(K.session,u);$("auth").classList.add("hidden");$("app").classList.remove("hidden");$("username").textContent=u;$("accountName").textContent=u;$("date").value=today();$("budgetMonth").value=today().slice(0,7);renderAll()}
+function logout(){localStorage.removeItem(K.session);openAuth(false)}
+$("goRegister").onclick=()=>openAuth(true);$("goLogin").onclick=()=>openAuth(false);
+$("loginForm").onsubmit=e=>{e.preventDefault();let u=$("loginUser").value.trim(),p=$("loginPass").value;if(u===ADMIN.u&&p===ADMIN.p)return login(ADMIN.u);let x=getUsers().find(a=>a.username.toLowerCase()===u.toLowerCase()&&a.password===p);if(!x)return message("Username atau password salah.");login(x.username)};
+$("registerForm").onsubmit=e=>{e.preventDefault();let u=$("regUser").value.trim(),p=$("regPass").value,p2=$("regPass2").value;if(u.length<3)return message("Username minimal 3 karakter.");if(u.toLowerCase()===ADMIN.u.toLowerCase())return message("Username Ditzzy khusus admin.");if(p.length<6)return message("Password minimal 6 karakter.");if(p!==p2)return message("Konfirmasi password tidak sama.");let us=getUsers();if(us.some(a=>a.username.toLowerCase()===u.toLowerCase()))return message("Username sudah digunakan.");us.push({username:u,password:p});setUsers(us);openAuth(false);$("loginUser").value=u;message("Registrasi berhasil. Silakan login.",true)};
+
+document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{document.querySelectorAll(".tabs button").forEach(x=>x.classList.remove("active"));b.classList.add("active");["home","transactions","budget","calculator","settings"].forEach(t=>$(`${t}Tab`).classList.toggle("hidden",b.dataset.tab!==t));if(b.dataset.tab==="budget")renderBudget()});
+$("logout").onclick=logout;
+
+function renderAll(){renderDashboard();renderTx();renderBudget();renderGoals()}
+function renderDashboard(){
+ let a=records(),inc=a.filter(x=>x.type==="in").reduce((s,x)=>s+x.amount,0),out=a.filter(x=>x.type==="out").reduce((s,x)=>s+x.amount,0);
+ $("saldo").textContent=money(inc-out);$("income").textContent=money(inc);$("expense").textContent=money(out);$("count").textContent=a.length;
+ let m=today().slice(0,7),ma=a.filter(x=>x.date.startsWith(m)),mi=ma.filter(x=>x.type==="in").reduce((s,x)=>s+x.amount,0),mo=ma.filter(x=>x.type==="out").reduce((s,x)=>s+x.amount,0);
+ $("monthSummary").innerHTML=`Pemasukan bulan ini: <b class="in">${money(mi)}</b><br>Pengeluaran bulan ini: <b class="out">${money(mo)}</b><br>Selisih: <b>${money(mi-mo)}</b>`;
+ let cats={};ma.filter(x=>x.type==="out").forEach(x=>cats[x.category]=(cats[x.category]||0)+x.amount);let keys=Object.keys(cats).sort((a,b)=>cats[b]-cats[a]);
+ $("categorySummary").innerHTML=keys.length?keys.map(c=>`<div style="margin:8px 0"><b>${esc(c)}</b> — ${money(cats[c])}</div>`).join(""):"Belum ada pengeluaran bulan ini.";
+}
+function renderTx(){
+ let q=$("search").value.toLowerCase(),ft=$("filterType").value,fm=$("filterMonth").value;
+ let a=records().filter(x=>(!q||(x.desc+" "+x.category).toLowerCase().includes(q))&&(ft==="all"||x.type===ft)&&(!fm||x.date.startsWith(fm))).sort((a,b)=>b.date.localeCompare(a.date));
+ $("txList").innerHTML=a.map(x=>`<tr><td>${esc(x.date)}</td><td>${esc(x.desc)}</td><td>${esc(x.category)}</td><td class="${x.type==="in"?"in":"out"}">${x.type==="in"?"+":"-"} ${money(x.amount)}</td><td><button class="ghost" onclick="editTx('${x.id}')">Edit</button> <button class="danger" onclick="deleteTx('${x.id}')">Hapus</button></td></tr>`).join("")||'<tr><td colspan="5">Belum ada transaksi.</td></tr>';
+}
+$("search").oninput=renderTx;$("filterType").onchange=renderTx;$("filterMonth").onchange=renderTx;
+let editing=null;
+$("txForm").onsubmit=e=>{e.preventDefault();let amount=Number($("amount").value);if(!Number.isFinite(amount)||amount<=0)return alert("Nominal tidak valid.");let a=records(),x={id:editing||Date.now().toString(36)+Math.random().toString(36).slice(2),desc:$("desc").value.trim(),amount,type:$("type").value,category:$("category").value,date:$("date").value};if(!x.desc)return alert("Deskripsi wajib diisi.");if(editing){let i=a.findIndex(z=>z.id===editing);if(i>=0)a[i]=x}else a.push(x);setRecords(a);resetTx();renderAll();alert(editing?"Transaksi diperbarui.":"Transaksi disimpan.")};
+function resetTx(){editing=null;$("txForm").reset();$("date").value=today();$("formTitle").textContent="Tambah Transaksi";$("saveTx").textContent="Simpan";$("cancelEdit").classList.add("hidden")}
+function editTx(id){let x=records().find(z=>z.id===id);if(!x)return;editing=id;$("desc").value=x.desc;$("amount").value=x.amount;$("type").value=x.type;$("category").value=x.category;$("date").value=x.date;$("formTitle").textContent="Edit Transaksi";$("saveTx").textContent="Update";$("cancelEdit").classList.remove("hidden");document.querySelector('[data-tab="transactions"]').click();scrollTo(0,0)}
+function deleteTx(id){if(!confirm("Yakin hapus transaksi ini?"))return;setRecords(records().filter(x=>x.id!==id));renderAll()}
+$("cancelEdit").onclick=resetTx;
+
+$("budgetForm").onsubmit=e=>{e.preventDefault();let p=profile();p.budget[$("budgetMonth").value]=Number($("budgetAmount").value);setProfile(p);renderBudget();alert("Budget disimpan.")};
+function renderBudget(){let p=profile(),m=today().slice(0,7),budget=Number(p.budget[m]||0),spent=records().filter(x=>x.type==="out"&&x.date.startsWith(m)).reduce((s,x)=>s+x.amount,0);if(!budget){$("budgetInfo").innerHTML="Belum ada budget untuk bulan ini.";return}let pct=Math.min(100,spent/budget*100);$("budgetInfo").innerHTML=`Budget: <b>${money(budget)}</b><br>Terpakai: <b class="out">${money(spent)}</b><br>Sisa: <b>${money(budget-spent)}</b><div class="progress" style="margin-top:10px"><div style="width:${pct}%"></div></div><small>${pct.toFixed(1)}% terpakai</small>`}
+$("goalForm").onsubmit=e=>{e.preventDefault();let p=profile();p.goals.push({id:Date.now().toString(36),name:$("goalName").value.trim(),target:Number($("goalAmount").value),saved:0});setProfile(p);e.target.reset();renderGoals()};
+function renderGoals(){let p=profile();$("goals").innerHTML=p.goals.length?p.goals.map(g=>{let pct=Math.min(100,g.saved/g.target*100);return `<div style="border-top:1px solid var(--line);padding:13px 0"><b>${esc(g.name)}</b><br><span class="muted">${money(g.saved)} / ${money(g.target)}</span><div class="progress" style="margin:8px 0"><div style="width:${pct}%"></div></div><button class="good" onclick="addGoal('${g.id}')">+ Tambah Tabungan</button> <button class="danger" onclick="deleteGoal('${g.id}')">Hapus</button></div>`}).join(""):"Belum ada target tabungan."}
+function addGoal(id){let n=Number(prompt("Berapa yang ingin ditambahkan?"));if(!Number.isFinite(n)||n<=0)return;let p=profile(),g=p.goals.find(x=>x.id===id);if(g){g.saved+=n;setProfile(p);renderGoals()}}
+function deleteGoal(id){if(!confirm("Hapus target ini?"))return;let p=profile();p.goals=p.goals.filter(x=>x.id!==id);setProfile(p);renderGoals()}
+
+$("backup").onclick=()=>{let payload={version:4,username:me(),transactions:records(),profile:profile(),createdAt:new Date().toISOString()};let blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="uangku-backup-"+me()+".json";a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500)};
+$("restore").onchange=e=>{let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{let j=JSON.parse(r.result);if(!Array.isArray(j.transactions)||typeof j.profile!=="object")throw Error();if(!confirm("Restore akan mengganti data akun saat ini. Lanjut?"))return;setRecords(j.transactions);setProfile(j.profile);renderAll();alert("Restore berhasil.")}catch{alert("File backup tidak valid.")}e.target.value=""};r.readAsText(f)};
+$("clearData").onclick=()=>{if(!confirm("Hapus SEMUA transaksi, budget, dan target akun ini?"))return;setRecords([]);setProfile({
